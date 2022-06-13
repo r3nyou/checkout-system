@@ -5,6 +5,7 @@ namespace Test\Checkout;
 use PHPUnit\Framework\TestCase;
 use Supermarket\Checkout;
 use Supermarket\Item;
+use Supermarket\PriceRules\BulkDiscount;
 use Supermarket\PriceRules\BuyOneGetOneFree;
 
 class CheckoutTest extends TestCase
@@ -14,6 +15,7 @@ class CheckoutTest extends TestCase
         $item = new Item('FR1', 3.11);
         $co = new Checkout();
         $co->scan($item);
+
         $this->assertSame(3.11, $co->total());
     }
     
@@ -40,16 +42,47 @@ class CheckoutTest extends TestCase
         $this->assertSame(3.11, $co->total());
     }
 
-    // TODO   price discount for bulk: SR1,SR1,SR1 13.5
+    public function testShouldDiscountForBulk()
+    {
+        $pricingRules = [
+            'SR1' => BulkDiscount::class,
+        ];
+        $co = new Checkout($pricingRules);
+        $co->scan(new Item('SR1', 5.00));
+        $co->scan(new Item('SR1', 5.00));
+        $co->scan(new Item('SR1', 5.00));
 
-//    public function testExample1()
-//    {
-//        $co = new Checkout($pricingRules);
-//        $co->scan($itemFR);
-//        $co->scan($itemSR);
-//        $co->scan($itemFR);
-//        $co->scan($itemFR);
-//        $co->scan($itemCF);
-//        $this->assertSame(22.45, $co->total());
-//    }
+        $this->assertSame(13.50, $co->total());
+    }
+
+    public function testMultiItemExample1()
+    {
+        $pricingRules = [
+            'FR1' => BuyOneGetOneFree::class,
+            'SR1' => BulkDiscount::class,
+        ];
+        $co = new Checkout($pricingRules);
+        $co->scan(new Item('FR1', 3.11));
+        $co->scan(new Item('SR1', 5.00));
+        $co->scan(new Item('FR1', 3.11));
+        $co->scan(new Item('FR1', 3.11));
+        $co->scan(new Item('CF1', 11.23));
+
+        $this->assertSame(22.45, $co->total());
+    }
+
+    public function testMultiItemExample2()
+    {
+        $pricingRules = [
+            'FR1' => BuyOneGetOneFree::class,
+            'SR1' => BulkDiscount::class,
+        ];
+        $co = new Checkout($pricingRules);
+        $co->scan(new Item('SR1', 5.00));
+        $co->scan(new Item('SR1', 5.00));
+        $co->scan(new Item('FR1', 3.11));
+        $co->scan(new Item('SR1', 5.00));
+
+        $this->assertSame(16.61, $co->total());
+    }
 }

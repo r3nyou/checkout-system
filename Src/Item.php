@@ -13,13 +13,13 @@ class Item
 
     public int $qty;
 
-    public PriceRule $priceRule;
+    public PriceRule $pricingRule;
 
     public function __construct(string $id, float $price)
     {
         $this->id = $id;
         $this->price = $price;
         $this->qty = 0;
-        $this->priceRule = new Normal();
+        $this->pricingRule = new Normal();
     }
 }

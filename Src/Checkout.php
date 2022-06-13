@@ -4,9 +4,9 @@ namespace Supermarket;
 
 class Checkout
 {
-    private $items;
+    private array $items;
 
-    private $pricingRules;
+    private array $pricingRules;
 
     public function __construct(array $pricingRules = [])
     {
@@ -24,17 +24,22 @@ class Checkout
 
     public function total(): float
     {
-        foreach ($this->pricingRules as $id => $pricingRule) {
-            if (array_key_exists($id, $this->items)) {
-                $this->items[$id]->priceRule = new $pricingRule;
-            }
-        }
+        $this->setupPricingRule();
 
         $total = 0;
         foreach ($this->items as $item) {
-            $total += $item->priceRule->getActPrice($item->price, $item->qty);
+            $total += $item->pricingRule->getActPrice($item->price, $item->qty);
         }
 
         return $total;
+    }
+
+    protected function setupPricingRule(): void
+    {
+        foreach ($this->pricingRules as $id => $pricingRule) {
+            if (array_key_exists($id, $this->items)) {
+                $this->items[$id]->pricingRule = new $pricingRule;
+            }
+        }
     }
 }
