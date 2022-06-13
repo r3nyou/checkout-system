@@ -5,6 +5,7 @@ namespace Test\Checkout;
 use PHPUnit\Framework\TestCase;
 use Supermarket\Checkout;
 use Supermarket\Item;
+use Supermarket\PriceRules\BuyOneGetOneFree;
 
 class CheckoutTest extends TestCase
 {
@@ -27,17 +28,28 @@ class CheckoutTest extends TestCase
         $this->assertSame(8.11, $co->total());
     }
 
-    // TODO   buy one, get one free: FR1,FR1 3.11
+    public function testShouldBuyOneGetOneFree()
+    {
+        $pricingRules = [
+            'FR1' => BuyOneGetOneFree::class,
+        ];
+        $co = new Checkout($pricingRules);
+        $co->scan(new Item('FR1', 3.11));
+        $co->scan(new Item('FR1', 3.11));
+
+        $this->assertSame(3.11, $co->total());
+    }
+
     // TODO   price discount for bulk: SR1,SR1,SR1 13.5
 
 //    public function testExample1()
 //    {
 //        $co = new Checkout($pricingRules);
-//        $co->scan($itemFr);
+//        $co->scan($itemFR);
 //        $co->scan($itemSR);
-//        $co->scan($itemFr);
-//        $co->scan($itemFr);
-//        $co->scan($itemCf);
+//        $co->scan($itemFR);
+//        $co->scan($itemFR);
+//        $co->scan($itemCF);
 //        $this->assertSame(22.45, $co->total());
 //    }
 }

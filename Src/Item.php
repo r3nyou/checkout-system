@@ -2,20 +2,24 @@
 
 namespace Supermarket;
 
+use Supermarket\PriceRules\Normal;
+use Supermarket\PriceRules\PriceRule;
+
 class Item
 {
-    private $id;
+    public string $id;
 
-    private $price;
+    public float $price;
+
+    public int $qty;
+
+    public PriceRule $priceRule;
 
     public function __construct(string $id, float $price)
     {
-            $this->id = $id;
-            $this->price = $price;
-    }
-
-    public function price(): float
-    {
-        return $this->price;
+        $this->id = $id;
+        $this->price = $price;
+        $this->qty = 0;
+        $this->priceRule = new Normal();
     }
 }
