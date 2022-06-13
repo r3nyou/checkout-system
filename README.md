@@ -1,3 +1,6 @@
+The tech test is from this [video](https://youtu.be/5XywKLjCD3g), which is a shopping cart with some rules to follow.
+
+# Requirement
 We sell only three products:
 
 ```
@@ -6,7 +9,6 @@ Product code | Name         | Price
 FR1          | Fruit tea    | £3.11
 SR1          | Strawberries | £5.00
 CF1          | Coffee       | £11.23   
-
 ```
 
 - The CEO is a big fan of buy-one-get-one-free offers and of fruit tea.
@@ -33,7 +35,14 @@ Total price expected: £3.11
 Basket: SR1,SR1,FR1,SR1  
 Total price expected: £16.61
 
----
+# install & start
+```shell
+docker build -t checkout-system .
+docker run -it --rm -v "$PWD":/var/www/ checkout-system bash
+composer install
+```
+
+run tests
 ```
 ./vendor/bin/phpunit --testsuite checkout
 ```
